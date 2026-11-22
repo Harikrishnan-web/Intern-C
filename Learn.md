@@ -720,3 +720,881 @@ plt.show()
 14. `dtypes` checks data types.
 15. Matplotlib and Seaborn are used for data visualization.
 ---
+# 2
+# Python for Machine Learning – Supervised and Unsupervised Learning
+
+## 1. Supervised vs Unsupervised Learning
+
+### Supervised Learning
+
+- Supervised learning is a machine learning technique where a model learns from labelled data.
+- Labelled data contains input features and known output values.
+- The model learns the relationship between inputs and outputs to make predictions.
+
+**Types:**
+1. Regression – Predicts continuous numerical values.
+2. Classification – Predicts categories or classes.
+
+**Examples:**
+- Predicting house prices.
+- Email spam detection.
+- Predicting student marks.
+
+**Python Example:**
+```python
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+predictions = model.predict(X_test)
+```
+
+### Unsupervised Learning
+
+- Unsupervised learning uses unlabelled data.
+- There is no predefined output or target variable.
+- The model identifies hidden patterns, groups and relationships in data.
+
+**Types:**
+1. Clustering – Groups similar data points.
+2. Association – Identifies relationships between variables.
+3. Dimensionality reduction – Reduces the number of features.
+
+**Examples:**
+- Customer segmentation.
+- Grouping similar products.
+- Finding patterns in customer behaviour.
+
+**Python Example:**
+```python
+from sklearn.cluster import KMeans
+
+model = KMeans(n_clusters=3, random_state=42)
+model.fit(X)
+
+print(model.labels_)
+```
+
+### Difference Between Supervised and Unsupervised Learning
+
+| Supervised Learning | Unsupervised Learning |
+|---|---|
+| Uses labelled data | Uses unlabelled data |
+| Has target output | No target output |
+| Predicts outcomes | Finds hidden patterns |
+| Classification and regression | Clustering and dimensionality reduction |
+| Example: Spam detection | Example: Customer grouping |
+
+---
+
+## 2. Train-Test Split
+
+### Definition
+
+Train-test split is a technique used to divide a dataset into two parts.
+
+1. Training data – Used to train the machine learning model.
+2. Testing data – Used to evaluate model performance on unseen data.
+
+**Common Splitting Ratios:**
+
+| Training Data | Testing Data |
+|---|---|
+| 80% | 20% |
+| 70% | 30% |
+| 75% | 25% |
+
+### Python Program
+
+```python
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+print(X_train.shape)
+print(X_test.shape)
+```
+
+**Important Parameters:**
+
+- `X` – Input features.
+- `y` – Target variable.
+- `test_size=0.2` – Uses 20% for testing.
+- `random_state=42` – Ensures reproducible splitting.
+
+**Advantages:**
+- Evaluates model performance.
+- Helps identify overfitting.
+- Tests predictions on unseen data.
+
+---
+
+## 3. Preprocessing Pipeline
+
+### Definition
+
+A preprocessing pipeline is a sequence of data preparation steps performed before training a machine learning model.
+
+It helps ensure that data is processed consistently during training and prediction.
+
+### Common Preprocessing Steps
+
+1. Handling missing values.
+2. Removing duplicate records when appropriate.
+3. Encoding categorical data.
+4. Scaling numerical features.
+5. Splitting training and testing data.
+
+### Important Preprocessing Techniques
+
+**1. Missing Value Handling**
+
+```python
+from sklearn.impute import SimpleImputer
+
+imputer = SimpleImputer(strategy="mean")
+X = imputer.fit_transform(X)
+```
+
+**2. Feature Scaling**
+
+```python
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+```
+
+**3. Encoding Categorical Data**
+
+```python
+from sklearn.preprocessing import OneHotEncoder
+
+encoder = OneHotEncoder(handle_unknown="ignore")
+```
+
+### Creating a Pipeline
+
+```python
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+pipeline = Pipeline([
+    ("imputer", SimpleImputer(strategy="mean")),
+    ("scaler", StandardScaler()),
+    ("model", LogisticRegression())
+])
+
+pipeline.fit(X_train, y_train)
+
+predictions = pipeline.predict(X_test)
+```
+
+**Advantages:**
+- Automates preprocessing.
+- Reduces repeated code.
+- Ensures consistent transformations.
+- Helps prevent data leakage.
+
+---
+
+## 4. Data Leakage
+
+### Definition
+
+Data leakage occurs when information from outside the training data is used during model training.
+
+It can make a machine learning model appear more accurate than it actually is.
+
+### Types of Data Leakage
+
+**1. Target Leakage**
+
+- Occurs when information directly related to the target variable is included as an input feature.
+- The model indirectly gets access to the answer.
+
+**2. Train-Test Contamination**
+
+- Occurs when test data influences the training process.
+- Example: Scaling the entire dataset before splitting it.
+
+### Example of Incorrect Approach
+
+```python
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+
+X_scaled = scaler.fit_transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42
+)
+```
+
+### Correct Approach
+
+```python
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+```
+
+**Important:**
+- Use `fit_transform()` on training data.
+- Use only `transform()` on testing data.
+- Never use test data to learn preprocessing parameters.
+
+---
+
+## 5. Linear Regression
+
+### Definition
+
+Linear regression is a supervised machine learning algorithm used to predict continuous numerical values.
+
+It identifies the linear relationship between independent and dependent variables.
+
+**Examples:**
+- Predicting house prices.
+- Predicting salary.
+- Predicting sales.
+- Predicting student marks.
+
+### Mathematical Formula
+
+y = mx + c
+
+Where:
+
+- y = Predicted output.
+- x = Input variable.
+- m = Slope or coefficient.
+- c = Intercept.
+
+For multiple features:
+
+y = b0 + b1x1 + b2x2 + ... + bnxn
+
+### Python Program
+
+```python
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+
+X = [[1], [2], [3], [4], [5]]
+y = [10, 20, 30, 40, 50]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model = LinearRegression()
+
+model.fit(X_train, y_train)
+
+predictions = model.predict(X_test)
+
+print("Predictions:", predictions)
+print("R2 Score:", r2_score(y_test, predictions))
+```
+
+### Important Functions
+
+| Function | Purpose |
+|---|---|
+| `LinearRegression()` | Creates model |
+| `fit()` | Trains model |
+| `predict()` | Makes predictions |
+| `coef_` | Displays coefficients |
+| `intercept_` | Displays intercept |
+
+### Advantages
+- Simple and easy to understand.
+- Fast to train.
+- Useful for predicting numerical values.
+
+### Limitations
+- Assumes a linear relationship.
+- Sensitive to outliers.
+- May perform poorly on complex relationships.
+
+---
+
+## 6. Logistic Regression
+
+### Definition
+
+Logistic regression is a supervised machine learning algorithm mainly used for classification problems.
+
+It predicts the probability of an observation belonging to a particular class.
+
+**Examples:**
+- Spam or not spam.
+- Pass or fail.
+- Disease or no disease.
+- Fraud or genuine transaction.
+
+### Sigmoid Function
+
+The sigmoid function converts a value into a probability between 0 and 1.
+
+\[
+P = \frac{1}{1+e^{-z}}
+\]
+
+Where:
+- P = Predicted probability.
+- e = Euler's number.
+- z = Linear combination of input features.
+
+### Python Program
+
+```python
+from sklearn.linear_model import LogisticRegression
+
+X = [[1], [2], [3], [4], [5], [6]]
+y = [0, 0, 0, 1, 1, 1]
+
+model = LogisticRegression()
+
+model.fit(X, y)
+
+predictions = model.predict(X)
+
+print("Predictions:", predictions)
+print("Probabilities:", model.predict_proba(X))
+```
+
+### Important Functions
+
+| Function | Purpose |
+|---|---|
+| `LogisticRegression()` | Creates model |
+| `fit()` | Trains model |
+| `predict()` | Predicts class |
+| `predict_proba()` | Predicts class probabilities |
+
+### Linear Regression vs Logistic Regression
+
+| Linear Regression | Logistic Regression |
+|---|---|
+| Used for regression | Used for classification |
+| Predicts continuous values | Predicts class probabilities |
+| Uses linear equation | Uses sigmoid function |
+| Example: House price | Example: Spam detection |
+
+---
+
+## 7. Confusion Matrix
+
+### Definition
+
+A confusion matrix is a table used to evaluate the performance of a classification model.
+
+It compares actual values with predicted values.
+
+### Four Important Terms
+
+1. True Positive (TP): Model correctly predicts positive.
+2. True Negative (TN): Model correctly predicts negative.
+3. False Positive (FP): Model predicts positive but actual value is negative.
+4. False Negative (FN): Model predicts negative but actual value is positive.
+
+### Confusion Matrix Structure
+
+| | Predicted Positive | Predicted Negative |
+|---|---|---|
+| Actual Positive | TP | FN |
+| Actual Negative | FP | TN |
+
+### Python Program
+
+```python
+from sklearn.metrics import confusion_matrix
+
+actual = [1, 0, 1, 1, 0, 0]
+predicted = [1, 0, 1, 0, 0, 1]
+
+cm = confusion_matrix(actual, predicted)
+
+print(cm)
+```
+
+Output:
+
+```text
+[[2 1]
+ [1 2]]
+```
+
+### Visualizing Confusion Matrix
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(actual, predicted)
+
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
+
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix")
+
+plt.show()
+```
+
+---
+
+## 8. Accuracy
+
+### Definition
+
+Accuracy measures the percentage of correctly predicted observations.
+
+### Formula
+
+\[
+Accuracy = \frac{TP+TN}{TP+TN+FP+FN}
+\]
+
+### Python Program
+
+```python
+from sklearn.metrics import accuracy_score
+
+actual = [1, 0, 1, 1, 0]
+predicted = [1, 0, 1, 0, 0]
+
+accuracy = accuracy_score(actual, predicted)
+
+print("Accuracy:", accuracy)
+```
+
+Output:
+
+```text
+Accuracy: 0.8
+```
+
+Accuracy = 80%.
+
+**Advantages:**
+- Easy to understand.
+- Useful when classes are reasonably balanced and error costs are similar.
+
+**Limitation:**
+- Can be misleading when the dataset is highly imbalanced.
+
+---
+
+## 9. Precision
+
+### Definition
+
+Precision measures how many of the observations predicted as positive are actually positive.
+
+### Formula
+
+\[
+Precision = \frac{TP}{TP+FP}
+\]
+
+### Python Program
+
+```python
+from sklearn.metrics import precision_score
+
+actual = [1, 0, 1, 1, 0]
+predicted = [1, 0, 1, 0, 0]
+
+precision = precision_score(actual, predicted)
+
+print("Precision:", precision)
+```
+
+Output:
+
+```text
+Precision: 1.0
+```
+
+**Importance:**
+- Useful when false positive predictions are costly.
+- Example: Avoiding genuine emails being marked as spam.
+
+### Other Important Evaluation Metrics
+
+**Recall:**
+
+Measures how many actual positive cases are correctly identified.
+
+\[
+Recall = \frac{TP}{TP+FN}
+\]
+
+**F1 Score:**
+
+Harmonic mean of precision and recall.
+
+\[
+F1 = 2 \times \frac{Precision \times Recall}{Precision+Recall}
+\]
+
+Python:
+
+```python
+from sklearn.metrics import recall_score, f1_score
+
+print("Recall:", recall_score(actual, predicted))
+print("F1 Score:", f1_score(actual, predicted))
+```
+
+---
+
+## 10. Classification Thresholds
+
+### Definition
+
+A classification threshold is the probability value used to decide whether a prediction belongs to the positive or negative class.
+
+The default threshold in many binary classifiers is 0.5.
+
+### Example
+
+| Predicted Probability | Threshold | Predicted Class |
+|---|---|---|
+| 0.80 | 0.50 | Positive |
+| 0.60 | 0.50 | Positive |
+| 0.40 | 0.50 | Negative |
+| 0.20 | 0.50 | Negative |
+
+### Python Program
+
+```python
+probabilities = [0.8, 0.6, 0.4, 0.2]
+
+threshold = 0.5
+
+predictions = [
+    1 if p >= threshold else 0
+    for p in probabilities
+]
+
+print(predictions)
+```
+
+Output:
+
+```text
+[1, 1, 0, 0]
+```
+
+### Effect of Threshold
+
+- Lower threshold: More positive predictions, generally higher recall and potentially lower precision.
+- Higher threshold: Fewer positive predictions, generally higher precision and potentially lower recall.
+
+Threshold selection depends on the cost of false positives and false negatives.
+
+---
+
+## 11. Decision Trees
+
+### Definition
+
+A decision tree is a supervised machine learning algorithm used for classification and regression.
+
+It makes predictions using a tree-like structure of conditions and decisions.
+
+### Main Components
+
+1. Root Node – Starting point of the tree.
+2. Decision Node – Represents a condition or test.
+3. Branch – Represents the outcome of a decision.
+4. Leaf Node – Represents the final prediction.
+
+### Example
+
+A decision tree can predict whether a student passes or fails based on marks.
+
+```text
+          Marks > 50?
+           /      \
+         Yes       No
+          |         |
+        Pass       Fail
+```
+
+### Python Program
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+
+X = [[30], [40], [50], [60], [70], [80]]
+y = [0, 0, 0, 1, 1, 1]
+
+model = DecisionTreeClassifier(random_state=42)
+
+model.fit(X, y)
+
+predictions = model.predict([[45], [75]])
+
+print(predictions)
+```
+
+### Visualizing Decision Tree
+
+```python
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+
+plot_tree(model, filled=True)
+
+plt.show()
+```
+
+### Advantages
+- Easy to understand.
+- Handles numerical and categorical features.
+- Requires little feature scaling.
+- Can model nonlinear relationships.
+
+### Limitations
+- Can overfit.
+- Small data changes can produce different trees.
+- Deep trees may become complex.
+
+---
+
+## 12. Random Forests
+
+### Definition
+
+Random Forest is an ensemble machine learning algorithm that combines multiple decision trees to improve prediction performance.
+
+It uses:
+- Random samples of training data.
+- Random subsets of features.
+- Multiple decision trees.
+
+### Working Principle
+
+1. Creates multiple random samples from training data.
+2. Builds a decision tree for each sample.
+3. Each tree makes a prediction.
+4. Combines predictions to produce the final result.
+
+For classification, majority voting is generally used.
+
+For regression, predictions are generally averaged.
+
+### Python Program
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+
+X = [[30], [40], [50], [60], [70], [80]]
+y = [0, 0, 0, 1, 1, 1]
+
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+model.fit(X, y)
+
+predictions = model.predict([[45], [75]])
+
+print(predictions)
+```
+
+### Important Parameters
+
+| Parameter | Purpose |
+|---|---|
+| `n_estimators` | Number of decision trees |
+| `max_depth` | Maximum depth of each tree |
+| `random_state` | Controls randomness |
+| `max_features` | Number of features considered for splitting |
+| `min_samples_split` | Minimum samples required to split a node |
+
+### Advantages
+- Often provides good prediction accuracy.
+- Reduces overfitting compared with a single deep decision tree.
+- Handles complex datasets.
+- Can estimate feature importance.
+
+### Limitations
+- Requires more memory.
+- Can be slower than a single decision tree.
+- Less interpretable than an individual decision tree.
+
+---
+
+## 13. Tree Depth
+
+### Definition
+
+Tree depth refers to the maximum number of levels from the root node to a leaf node.
+
+### Importance
+
+- Shallow tree: Simpler model, may underfit.
+- Deep tree: More complex model, may overfit.
+
+### Python Program
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+
+model = DecisionTreeClassifier(
+    max_depth=3,
+    random_state=42
+)
+
+model.fit(X, y)
+```
+
+Here, `max_depth=3` limits the maximum tree depth to 3.
+
+### Effect of Tree Depth
+
+| Shallow Tree | Deep Tree |
+|---|---|
+| Simple model | Complex model |
+| May underfit | May overfit |
+| Less computation | More computation |
+| Easier to interpret | Harder to interpret |
+
+---
+
+## 14. Feature Importance
+
+### Definition
+
+Feature importance measures how much each input feature contributes to a machine learning model's predictions.
+
+It helps identify which variables are more influential in a model.
+
+### Example
+
+In house price prediction, important features may include:
+- House area.
+- Number of bedrooms.
+- Location.
+- Building age.
+
+### Python Program
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
+
+X = pd.DataFrame({
+    "Age": [20, 30, 40, 50, 60],
+    "Salary": [20000, 30000, 40000, 50000, 60000],
+    "Experience": [1, 3, 5, 7, 9]
+})
+
+y = [0, 0, 0, 1, 1]
+
+model = RandomForestClassifier(random_state=42)
+
+model.fit(X, y)
+
+importance = model.feature_importances_
+
+for name, value in zip(X.columns, importance):
+    print(name, value)
+```
+
+### Important Points
+
+- Higher importance indicates greater contribution to the model's predictions.
+- Lower importance indicates less contribution.
+- Feature importance does not prove that a feature causes the outcome.
+- Tree-based models such as Decision Trees and Random Forests provide feature importance values.
+
+---
+
+## 15. Important Python Libraries
+
+| Library | Purpose |
+|---|---|
+| NumPy | Numerical calculations |
+| Pandas | Data handling and analysis |
+| Matplotlib | Data visualization |
+| Seaborn | Statistical visualization |
+| Scikit-learn | Machine learning |
+| `sklearn.model_selection` | Train-test splitting |
+| `sklearn.preprocessing` | Data preprocessing |
+| `sklearn.pipeline` | Creating pipelines |
+| `sklearn.linear_model` | Linear and logistic regression |
+| `sklearn.tree` | Decision trees |
+| `sklearn.ensemble` | Random forests |
+| `sklearn.metrics` | Model evaluation |
+
+---
+
+## 16. Quick Revision – Important Python Syntax
+
+| Task | Python Syntax |
+|---|---|
+| Import Scikit-learn | `import sklearn` |
+| Split dataset | `train_test_split()` |
+| Create linear regression | `LinearRegression()` |
+| Create logistic regression | `LogisticRegression()` |
+| Create decision tree | `DecisionTreeClassifier()` |
+| Create random forest | `RandomForestClassifier()` |
+| Train model | `model.fit(X_train, y_train)` |
+| Make predictions | `model.predict(X_test)` |
+| Predict probabilities | `model.predict_proba(X_test)` |
+| Calculate accuracy | `accuracy_score()` |
+| Calculate precision | `precision_score()` |
+| Calculate recall | `recall_score()` |
+| Calculate F1 score | `f1_score()` |
+| Create confusion matrix | `confusion_matrix()` |
+| Scale features | `StandardScaler()` |
+| Fill missing values | `SimpleImputer()` |
+| Create pipeline | `Pipeline()` |
+| Display feature importance | `model.feature_importances_` |
+| Set tree depth | `max_depth=3` |
+| Plot decision tree | `plot_tree()` |
+
+---
+
+## 17. Important Points to Remember
+
+1. Supervised learning uses labelled data.
+2. Unsupervised learning uses unlabelled data.
+3. Train-test split separates training and testing datasets.
+4. Preprocessing prepares data before model training.
+5. Data leakage occurs when information from outside the training process improperly influences the model.
+6. Linear regression predicts continuous numerical values.
+7. Logistic regression is used for classification.
+8. Confusion matrix evaluates classification predictions.
+9. Accuracy measures overall correct predictions.
+10. Precision measures the correctness of positive predictions.
+11. Recall measures how many actual positive cases are identified.
+12. F1 score balances precision and recall.
+13. Classification thresholds determine positive and negative predictions.
+14. Decision trees use conditions to make predictions.
+15. Random forests combine multiple decision trees.
+16. Tree depth controls model complexity.
+17. Feature importance identifies influential input features.
+
+---
