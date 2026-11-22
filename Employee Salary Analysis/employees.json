@@ -1,0 +1,26 @@
+[
+    {
+        "Employee_ID": 111,
+        "Name": "Kavin",
+        "Department": "IT",
+        "Salary": 58000
+    },
+    {
+        "Employee_ID": 112,
+        "Name": "Lakshmi",
+        "Department": "HR",
+        "Salary": 36000
+    },
+    {
+        "Employee_ID": 113,
+        "Name": "Manoj",
+        "Department": "Finance",
+        "Salary": 48000
+    },
+    {
+        "Employee_ID": 114,
+        "Name": "Nisha",
+        "Department": "Marketing",
+        "Salary": 44000
+    }
+]
